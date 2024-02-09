@@ -70,6 +70,10 @@ main {
         
     }
 
+    ::deep .mud-list {
+        min-height: 200px !important;
+    }
+
     ::deep .mud-nav-link {
         display: flex !important;
         flex-direction: column !important;

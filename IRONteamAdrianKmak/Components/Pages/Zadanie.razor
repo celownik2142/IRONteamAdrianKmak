@@ -1,0 +1,93 @@
+﻿@page "/zadanie"
+@rendermode InteractiveServer
+
+<MyMudProviders />
+
+<PageTitle>Zadanie</PageTitle>
+
+<MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Selector == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
+    <ChildContent>
+        <MudPaper Class="ma-4 flex-grow-1">
+            <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
+                <MudListSubheader>Users</MudListSubheader>
+                <MudDropZone T="DropItem" Identifier="users" Class="flex-grow-1" />
+            </MudList>
+        </MudPaper>
+        <MudTabs Outlined="true">
+            <MudTabPanel Text="Grupa 1" Icon="@Icons.Material.Filled.Api" >
+                <ChildContent>
+                    <MudPaper Class="ma-4 flex-grow-1">
+                        <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
+                            <MudListSubheader>Grupa 1</MudListSubheader>
+                            <MudDropZone T="DropItem" Identifier="grupa1" Class="flex-grow-1" />
+                         </MudList>
+                    </MudPaper>
+                </ChildContent>
+            </MudTabPanel>
+            <MudTabPanel Text="Grupa 2" Icon="@Icons.Material.Filled.Build">
+                <ChildContent>
+                    <MudPaper Class="ma-4 flex-grow-1">
+                        <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
+                            <MudListSubheader>Grupa 2</MudListSubheader>
+                            <MudDropZone T="DropItem" Identifier="grupa2" Class="flex-grow-1" />
+                        </MudList>
+                    </MudPaper>
+                </ChildContent>
+            </MudTabPanel>
+            <MudTabPanel Text="Grupa 3" Icon="@Icons.Material.Filled.BugReport">
+                <ChildContent>
+                    <MudPaper Class="ma-4 flex-grow-1">
+                        <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
+                            <MudListSubheader>Grupa 3</MudListSubheader>
+                            <MudDropZone T="DropItem" Identifier="grupa3" Class="flex-grow-1" />
+                        </MudList>
+                    </MudPaper>
+                </ChildContent>
+            </MudTabPanel>
+            <MudTabPanel Text="Grupa 4" Icon="@Icons.Material.Filled.Build">
+                <ChildContent>
+                    <MudPaper Class="ma-4 flex-grow-1">
+                        <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
+                            <MudListSubheader>Grupa 4</MudListSubheader>
+                            <MudDropZone T="DropItem" Identifier="grupa4" Class="flex-grow-1" />
+                        </MudList>
+                    </MudPaper>
+                </ChildContent>
+            </MudTabPanel>
+            <MudTabPanel Text="Grupa 5" Icon="@Icons.Material.Filled.BugReport">
+                <ChildContent>
+                    <MudPaper Class="ma-4 flex-grow-1">
+                        <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
+                            <MudListSubheader>Grupa 4</MudListSubheader>
+                            <MudDropZone T="DropItem" Identifier="grupa5" Class="flex-grow-1" />
+                        </MudList>
+                    </MudPaper>
+                </ChildContent>
+            </MudTabPanel>
+        </MudTabs>
+    </ChildContent>
+    <ItemRenderer>
+        <MudListItem Text="@context.Name" />
+    </ItemRenderer>
+</MudDropContainer>
+@code {
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        dropItem.Item.Selector = dropItem.DropzoneIdentifier;
+    }
+
+    private List<DropItem> _items = new()
+    {
+        new DropItem(){ Name = "Item 1", Selector = "users" },
+        new DropItem(){ Name = "Item 2", Selector = "users" },
+        new DropItem(){ Name = "Item 3", Selector = "users" },
+        new DropItem(){ Name = "Item 4", Selector = "users" },
+        new DropItem(){ Name = "Item 5", Selector = "users" },
+    };
+
+    public class DropItem
+    {
+        public string Name { get; init; }
+        public string Selector { get; set; }
+    }
+}
