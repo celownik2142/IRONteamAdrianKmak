@@ -130,6 +130,19 @@ main {
     }
 }
 
+.h-screen {
+    height: 100vh !important;
+    max-height: 100vh !important;
+}
+
+.overflow-y-scroll {
+    overflow-y: scroll;
+}
+
+.justify-start {
+    justify-content: start;
+}
+
 .navbar-toggler {
     appearance: none;
     cursor: pointer;
