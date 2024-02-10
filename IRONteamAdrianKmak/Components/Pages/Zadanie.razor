@@ -73,7 +73,16 @@
         </MudGrid>
     </ChildContent>
     <ItemRenderer>
-        <MudListItem Text="@context.Name" Disabled="@(context.Disabled)" />
+        <MudMenu ActivationEvent="@MouseEvent.RightClick" >
+            <ActivatorContent>
+                <MudListItem Text="@context.Name" Icon="@(context.Disabled ? Icons.Material.Filled.Close : Icons.Material.Filled.Check)" />
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem Class="mud-list-h-unset">
+                    <MudCheckBox @bind-Value="@context.Disabled">Zablokuj pozycję użytkownika</MudCheckBox>
+                </MudMenuItem>
+            </ChildContent>
+        </MudMenu>
     </ItemRenderer>
 </MudDropContainer>
 

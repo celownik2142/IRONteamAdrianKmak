@@ -70,7 +70,7 @@ main {
         
     }
 
-    ::deep .mud-list {
+    ::deep .mud-drop-zone {
         min-height: 200px !important;
     }
 
@@ -166,6 +166,10 @@ main {
 
 .navbar-toggler:checked ~ .nav-scrollable {
     display: block;
+}
+
+::deep .mud-drop-item {
+    transform: unset !important;
 }
 
 @media (min-width: 641px) {
