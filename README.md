@@ -13,7 +13,7 @@
 
 ## Pozostało do wykonania:
 
-- Otwieranie nowej zakładki podczas przenoszenia elementu
+- Otwieranie nowej zakładki podczas przenoszenia elementu (z jakiegoś powodu nie działa event przy najechaniu myszką)
 - Animacja otwierania zakładki
 - Animacja dodawania zdarzenia
 - Przygotowanie karty użytkownika

@@ -23,8 +23,8 @@
                     </MudStack>
                 </MudPaper>
             </MudPaper>
-            <MudTabs Outlined="true">
-                <MudTabPanel Text="Grupa 1" Icon="@Icons.Material.Filled.Star">
+            <MudTabs Outlined="true" @ref="tabs">
+                <MudTabPanel @onmouseenter=@(() => OpenTab(0)) Text="Grupa 1" Icon="@Icons.Material.Filled.Star">
                     <ChildContent>
                         <MudPaper Class="flex-grow-1">
                             <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
@@ -33,7 +33,7 @@
                         </MudPaper>
                     </ChildContent>
                 </MudTabPanel>
-                <MudTabPanel Text="Grupa 2" Icon="@Icons.Material.Filled.Square">
+                <MudTabPanel @onmouseenter=@(() => OpenTab(1)) Text="Grupa 2" Icon="@Icons.Material.Filled.Square">
                     <ChildContent>
                         <MudPaper Class="flex-grow-1">
                             <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
@@ -42,7 +42,7 @@
                         </MudPaper>
                     </ChildContent>
                 </MudTabPanel>
-                <MudTabPanel Text="Grupa 3" Icon="@Icons.Material.Filled.InsertEmoticon">
+                <MudTabPanel @onmouseenter=@(() => OpenTab(2)) Text="Grupa 3" Icon="@Icons.Material.Filled.InsertEmoticon">
                     <ChildContent>
                         <MudPaper Class="flex-grow-1">
                             <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
@@ -51,7 +51,7 @@
                         </MudPaper>
                     </ChildContent>
                 </MudTabPanel>
-                <MudTabPanel Text="Grupa 4" Icon="@Icons.Material.Filled.Circle">
+                <MudTabPanel @onmouseenter=@(() => OpenTab(3)) Text="Grupa 4" Icon="@Icons.Material.Filled.Circle">
                     <ChildContent>
                         <MudPaper Class="flex-grow-1">
                             <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
@@ -60,7 +60,7 @@
                         </MudPaper>
                     </ChildContent>
                 </MudTabPanel>
-                <MudTabPanel Text="Grupa 5" Icon="@Icons.Material.Filled.ChangeHistory">
+                <MudTabPanel @onmouseenter=@(() => OpenTab(4)) Text="Grupa 5" Icon="@Icons.Material.Filled.ChangeHistory">
                     <ChildContent>
                         <MudPaper Class="flex-grow-1">
                             <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
@@ -87,8 +87,34 @@
 </MudDropContainer>
 
 @code {
+    private MudTabs tabs;
+    private List<int> SelectedItems = new();
+    private List<LogItem> Logs = new();
+    private string previousContainerIndex = string.Empty;
+    private bool dragging = false;
+    private record LogItem(DropItem Item, string ContainerIndex, ActionType Action);
+    private class DropItem
+    {
+        public int Id { get; init; }
+        public string Name { get; init; }
+        public Sex Sex { get; init; }
+        public string Selector { get; set; }
+        public bool Disabled { get; set; } = false;
+    }
+
+    private List<DropItem> _items = new()
+    {
+        new DropItem(){ Id = 1, Name = "Jan Kowalski", Sex = Sex.Male, Selector = "0" },
+        new DropItem(){ Id = 2, Name = "Anna Nowak", Sex = Sex.Female, Selector = "0" },
+        new DropItem(){ Id = 3, Name = "Janina Adamiak", Sex = Sex.Female, Selector = "0", Disabled = true },
+        new DropItem(){ Id = 4, Name = "Nieznany", Sex = Sex.Other, Selector = "0" },
+        new DropItem(){ Id = 5, Name = "Krzysztof Zen", Sex = Sex.Male, Selector = "0" },
+    };
+
     private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
     {
+        dragging = false;
+
         if (dropItem.DropzoneIdentifier == previousContainerIndex)
         {
             return;
@@ -126,6 +152,7 @@
 
     private void ItemPicked(MudDragAndDropItemTransaction<DropItem> dropItem)
     {
+        dragging = true;
         previousContainerIndex = dropItem.SourceZoneIdentifier;
     }
 
@@ -153,31 +180,15 @@
         SelectedItems.Add(id);
     }
 
-    private List<int> SelectedItems = new();
-
-    private List<DropItem> _items = new()
+    private void OpenTab(int index)
     {
-        new DropItem(){ Id = 1, Name = "Jan Kowalski", Sex = Sex.Male, Selector = "0" },
-        new DropItem(){ Id = 2, Name = "Anna Nowak", Sex = Sex.Female, Selector = "0" },
-        new DropItem(){ Id = 3, Name = "Janina Adamiak", Sex = Sex.Female, Selector = "0", Disabled = true },
-        new DropItem(){ Id = 4, Name = "Nieznany", Sex = Sex.Other, Selector = "0" },
-        new DropItem(){ Id = 5, Name = "Krzysztof Zen", Sex = Sex.Male, Selector = "0" },
-    };
+        if (!dragging)
+        {
+            return;
+        }
 
-    private List<LogItem> Logs = new();
-
-    private string previousContainerIndex = string.Empty;
-
-    private class DropItem
-    {
-        public int Id { get; init; }
-        public string Name { get; init; }
-        public Sex Sex { get; init; }
-        public string Selector { get; set; }
-        public bool Disabled { get; set; } = false;
+        tabs.ActivatePanel(index);
     }
-
-    private record LogItem(DropItem Item, string ContainerIndex, ActionType Action);
 
     private string CreateLogMessage(DropItem item, string containerIndex, ActionType action)
     {
@@ -199,7 +210,7 @@
             case "5":
                 return Icons.Material.Filled.ChangeHistory;
             default:
-                return Icons.Material.Filled.Dangerous;                
+                return Icons.Material.Filled.Dangerous;
         }
     }
 }
