@@ -18,7 +18,7 @@
                         @for(int i = Logs.Count - 1; i >= 0; --i)
                         {
                             int index = i;
-                            <MudChip Class="justify-start" Icon="@GetIcon(Logs[index].ContainerIndex)" Variant="Variant.Text" Color="Color.Primary">@CreateLogMessage(Logs[index].Item.Item, Logs[index].ContainerIndex, Logs[index].Action)</MudChip>
+                            <MudChip Class="justify-start" Icon="@GetIcon(Logs[index].ContainerIndex)" Variant="Variant.Text" Color="Color.Primary">@CreateLogMessage(Logs[index].Item, Logs[index].ContainerIndex, Logs[index].Action)</MudChip>
                         }
                     </MudStack>
                 </MudPaper>
@@ -75,7 +75,7 @@
     <ItemRenderer>
         <MudMenu ActivationEvent="@MouseEvent.RightClick" >
             <ActivatorContent>
-                <MudListItem Text="@context.Name" Icon="@(context.Disabled ? Icons.Material.Filled.Close : Icons.Material.Filled.Check)" />
+                <MudListItem Style="@(SelectedItems.Contains(context.Id) ? "opacity: 0.5" : string.Empty)" Text="@context.Name" Icon="@(context.Disabled ? Icons.Material.Filled.Close : Icons.Material.Filled.Check)" OnClick="(args) => OnSelect(args, context.Id)" />
             </ActivatorContent>
             <ChildContent>
                 <MudMenuItem Class="mud-list-h-unset">
@@ -89,22 +89,39 @@
 @code {
     private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
     {
-        if (dropItem.DropzoneIdentifier == previousContainerIndex) 
+        if (dropItem.DropzoneIdentifier == previousContainerIndex)
         {
             return;
         }
 
-        dropItem.Item.Selector = dropItem.DropzoneIdentifier;
-
-        if (previousContainerIndex != "0")
+        if (!SelectedItems.Contains(dropItem.Item.Id))
         {
-            Logs.Add(new LogItem(dropItem, previousContainerIndex, ActionType.Removed));
+            SelectedItems.Add(dropItem.Item.Id);
         }
 
-        if (dropItem.DropzoneIdentifier != "0")
+        IEnumerable<DropItem> dropItems = _items.Where(item => SelectedItems.Contains(item.Id));
+
+        foreach (DropItem item in dropItems)
         {
-            Logs.Add(new LogItem(dropItem, dropItem.DropzoneIdentifier, ActionType.Added));
+            if (dropItem.DropzoneIdentifier == item.Selector)
+            {
+                return;
+            }
+
+            if (item.Selector != "0")
+            {
+                Logs.Add(new LogItem(item, previousContainerIndex, ActionType.Removed));
+            }
+
+            item.Selector = dropItem.DropzoneIdentifier;
+
+            if (dropItem.DropzoneIdentifier != "0")
+            {
+                Logs.Add(new LogItem(item, dropItem.DropzoneIdentifier, ActionType.Added));
+            }
         }
+
+        SelectedItems.Clear();
     }
 
     private void ItemPicked(MudDragAndDropItemTransaction<DropItem> dropItem)
@@ -112,13 +129,39 @@
         previousContainerIndex = dropItem.SourceZoneIdentifier;
     }
 
+    private void OnSelect(MouseEventArgs args, int id)
+    {
+        if (!args.ShiftKey)
+        {
+            return;
+        }
+
+        DropItem? item = _items.FirstOrDefault(item => item.Id == id);
+
+        if (item is null || item.Disabled)
+        {
+            return;
+        }
+
+        if (SelectedItems.Contains(id))
+        {
+            SelectedItems.Remove(id);
+
+            return;
+        }
+
+        SelectedItems.Add(id);
+    }
+
+    private List<int> SelectedItems = new();
+
     private List<DropItem> _items = new()
     {
-        new DropItem(){ Name = "Item 1", Sex = Sex.Male, Selector = "0" },
-        new DropItem(){ Name = "Item 2", Sex = Sex.Female, Selector = "0" },
-        new DropItem(){ Name = "Item 3", Sex = Sex.Female, Selector = "0", Disabled = true },
-        new DropItem(){ Name = "Item 4", Sex = Sex.Other, Selector = "0" },
-        new DropItem(){ Name = "Item 5", Sex = Sex.Male, Selector = "0" },
+        new DropItem(){ Id = 1, Name = "Jan Kowalski", Sex = Sex.Male, Selector = "0" },
+        new DropItem(){ Id = 2, Name = "Anna Nowak", Sex = Sex.Female, Selector = "0" },
+        new DropItem(){ Id = 3, Name = "Janina Adamiak", Sex = Sex.Female, Selector = "0", Disabled = true },
+        new DropItem(){ Id = 4, Name = "Nieznany", Sex = Sex.Other, Selector = "0" },
+        new DropItem(){ Id = 5, Name = "Krzysztof Zen", Sex = Sex.Male, Selector = "0" },
     };
 
     private List<LogItem> Logs = new();
@@ -127,13 +170,14 @@
 
     private class DropItem
     {
+        public int Id { get; init; }
         public string Name { get; init; }
         public Sex Sex { get; init; }
         public string Selector { get; set; }
         public bool Disabled { get; set; } = false;
     }
 
-    private record LogItem(MudItemDropInfo<DropItem> Item, string ContainerIndex, ActionType Action);
+    private record LogItem(DropItem Item, string ContainerIndex, ActionType Action);
 
     private string CreateLogMessage(DropItem item, string containerIndex, ActionType action)
     {

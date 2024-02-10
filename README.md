@@ -9,10 +9,10 @@
 - Dodanie podglądu zdarzeń
 - Zmiana kolejności wewnątrz danego drop zone
 - Zablokowanie elementu na danej pozycji
+- Zaznaczenie kilku elementów i ich przenoszenie
 
 ## Pozostało do wykonania:
 
-- Zaznaczenie kilku elementów i ich przenoszenie
 - Otwieranie nowej zakładki podczas przenoszenia elementu
 - Animacja otwierania zakładki
 - Animacja dodawania zdarzenia
